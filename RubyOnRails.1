@@ -6,3 +6,64 @@ davide     WHITE
 other-User skin-color
 
 */
+
+// This is the controller
+
+class UsersController < ApplicationController
+  def index
+    @users = User.all
+  end
+
+  def new
+    @user = User.new
+  end
+
+  def create
+    @user = User.new(user_params)
+    if @user.save
+      redirect_to users_path
+    else
+      render :new
+    end
+  end
+
+  private
+
+  def user_params
+    params.require(:user).permit(:name, :skin_color)
+  end
+end
+
+// This is the model
+
+class User < ApplicationRecord
+  validates :name, presence: true
+  validates :skin_color, presence: true
+end
+
+// This is the view
+
+<%= form_for @user do |f| %>
+  <%= f.label :name %>
+  <%= f.text_field :name %>
+  <%= f.label :skin_color %>
+  <%= f.select :skin_color, options_for_select(%w(WHITE BROWN BLACK)) %>
+  <%= f.submit %>
+<% end %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Skin Color</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @users.each do |user| %>
+      <tr>
+        <td><%= user.name %></td>
+        <td><%= user.skin_color %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
